@@ -1,3 +1,9 @@
+# mrp_lscustoms
+
+forked version of fivem-lscustoms-es to work with MRP and some custom improvements
+
+ensure mrp_lscustoms
+
 # fivem-lscustoms-es
 
 **Note: this script is licensed under "[No License](https://choosealicense.com/no-license/)", you are allowed to:**
