@@ -1,7 +1,6 @@
 
-
+local vehicleInGarage = false
 local FirstJoinProper = false
-local near = false
 local closed = false
 local insideGarage = false
 local currentGarage = nil
@@ -13,19 +12,18 @@ local oldmod = -1
 local oldmodtype = -1
 local previewmod = -1
 local oldmodaction = false
-local hasJustBeenInGarage = false
 local locations = {
-	[1] = { locked = false, range = 2, outside = { x = -362.796, y = -132.400, z = 38.252, heading = 71.187}, inside = {x = -337.386,y = -136.924,z = 38.573, heading = 269.455}},
-	[2] = { locked = false, range = 3, outside = { x = -1140.191, y = -1985.478, z = 12.729, heading = 315.290}, inside = {x = -1155.536,y = -2007.183,z = 12.744, heading = 155.413}},
-	[3] = { locked = false, range = 3, outside = { x = 716.464, y = -1088.869, z = 21.929, heading = 88.768}, inside = {x = 731.816,y = -1088.822,z = 21.733, heading = 269.318}},
-	[4] = { locked = false, range = 3, outside = { x = 1174.811, y = 2649.954, z = 37.371, heading = 0.450}, inside = {x = 1175.04,y = 2640.216,z = 37.321, heading = 182.402}},
-	[5] = { locked = false, range = 1, outside = { x = 111.366, y = 6625.840, z = 31.787, heading = 269}, inside = {x = 111.366, y = 6625.840, z = 31.787, heading = 71}},
-	[6] = { locked = false, range = 3, outside = { x = 1371.013, y = 3595.905, z = 34.895, heading = 155}, inside = {x = 1371.013, y = 3595.905, z = 34.895, heading = 311}},
-	[7] = { locked = false, range = 3, outside = { x = -81.235, y = 6421.702, z = 31.490, heading = 269.768}, inside = {x = -81.235, y = 6421.702, z = 31.490, heading = 88}},
-	[8] = { locked = false, range = 3, outside = { x = -199.087, y = -1383.172, z = 31.258, heading = 190}, inside = {x = -199.087, y = -1383.172, z = 31.258, heading = 11}},
-	[9] = { locked = false, range = 3, outside = { x = -211.614, y = -1324.847, z = 30.890, heading = 270.187}, inside = {x = -211.614, y = -1324.847, z = 30.890, heading = 69.455}},
-	[10] = { locked = false, range = 3, outside = { x = -1465.312, y = -923.037, z = 10.036, heading = 155.290}, inside = {x = -1465.312, y = -923.037, z = 10.036, heading = 315.413}},
-	[11] = { locked = false, range = 1, outside = { x = 104.982, y = 6621.961, z = 31.787, heading = 45.290}, inside = {x = 104.982, y = 6621.961, z = 31.787, heading = 45.290}},
+	[1] = { locked = false, range = 10, outside = { x = -362.796, y = -132.400, z = 38.252, heading = 71.187}, inside = {x = -337.386,y = -136.924,z = 38.573, heading = 269.455}},
+	[2] = { locked = false, range = 10, outside = { x = -1140.191, y = -1985.478, z = 12.729, heading = 315.290}, inside = {x = -1155.536,y = -2007.183,z = 12.744, heading = 155.413}},
+	[3] = { locked = false, range = 10, outside = { x = 716.464, y = -1088.869, z = 21.929, heading = 88.768}, inside = {x = 731.816,y = -1088.822,z = 21.733, heading = 269.318}},
+	[4] = { locked = false, range = 10, outside = { x = 1174.811, y = 2649.954, z = 37.371, heading = 0.450}, inside = {x = 1175.04,y = 2640.216,z = 37.321, heading = 182.402}},
+	[5] = { locked = false, range = 10, outside = { x = 111.366, y = 6625.840, z = 31.787, heading = 269}, inside = {x = 111.366, y = 6625.840, z = 31.787, heading = 71}},
+	[6] = { locked = false, range = 10, outside = { x = 1371.013, y = 3595.905, z = 34.895, heading = 155}, inside = {x = 1371.013, y = 3595.905, z = 34.895, heading = 311}},
+	[7] = { locked = false, range = 10, outside = { x = -81.235, y = 6421.702, z = 31.490, heading = 269.768}, inside = {x = -81.235, y = 6421.702, z = 31.490, heading = 88}},
+	[8] = { locked = false, range = 10, outside = { x = -199.087, y = -1383.172, z = 31.258, heading = 190}, inside = {x = -199.087, y = -1383.172, z = 31.258, heading = 11}},
+	[9] = { locked = false, range = 10, outside = { x = -211.614, y = -1324.847, z = 30.890, heading = 270.187}, inside = {x = -211.614, y = -1324.847, z = 30.890, heading = 69.455}},
+	[10] = { locked = false, range = 10, outside = { x = -1465.312, y = -923.037, z = 10.036, heading = 155.290}, inside = {x = -1465.312, y = -923.037, z = 10.036, heading = 315.413}},
+	[11] = { locked = false, range = 10, outside = { x = 104.982, y = 6621.961, z = 31.787, heading = 45.290}, inside = {x = 104.982, y = 6621.961, z = 31.787, heading = 45.290}},
 }
 
 function AddBlips()
@@ -35,6 +33,12 @@ function AddBlips()
 		SetBlipScale(blip, 0.9)
 		SetBlipAsShortRange(blip,true)
 	end
+end
+
+function displayHelpText(str)
+    BeginTextCommandDisplayHelp("STRING")
+    AddTextComponentString(str)
+    EndTextCommandDisplayHelp(0, false, true, -1)
 end
 
 function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
@@ -62,21 +66,24 @@ Citizen.CreateThread(function()
 				local player = GetPlayerPed(-1)
 				local playerLoc = GetEntityCoords(player)
 				local veh = GetVehiclePedIsUsing(player)
-				local distance = GetDistanceBetweenCoords(pos.outside.x, pos.outside.y, pos.outside.z, playerLoc )
+				local distance = GetDistanceBetweenCoords(pos.inside.x, pos.inside.y, pos.inside.z, playerLoc)
 				
-				if distance < pos.range and not near then
-					if DoesEntityExist(veh) then
-						if not pos.locked and not hasJustBeenInGarage then
-								TriggerServerEvent("fx_customs:RequestPriceList")
-								currentGarage = i
-								insidePosition = pos.inside
-								outsidePosition = pos.outside
-								SetVehicleInGarage()
-						elseif pos.locked and not currentGarage then
-							drawTxt("~r~Locked, please wait",4,1,0.5,0.8,1.0,255,255,255,255)
-						end
-					end
-				end
+                if distance < pos.range then
+                    displayHelpText("Press ~INPUT_PICKUP~ to use enter shop ~b~")
+                    if IsControlJustPressed(1, 38) then
+                        if DoesEntityExist(veh) then
+                            if not pos.locked then
+                                TriggerServerEvent("fx_customs:RequestPriceList")
+                                currentGarage = i
+                                insidePosition = pos.inside
+                                outsidePosition = pos.outside
+                                SetVehicleInGarage()
+                            elseif pos.locked and not currentGarage then
+                                drawTxt("~r~Locked, please wait",4,1,0.5,0.8,1.0,255,255,255,255)
+                            end
+                        end
+                    end
+                end
 			end	
 		end
 	end
@@ -94,7 +101,6 @@ AddEventHandler('fx_customs:RequestPriceList', function(modprices)
 	modPrices = modprices
 end)
 
-
 function SetVehicleInGarage()	
 	local pos = insidePosition
 	local player = GetPlayerPed(-1)
@@ -104,7 +110,6 @@ function SetVehicleInGarage()
 	
 	if DoesEntityExist(veh) then
 		vehicleInGarage = true
-		hasJustBeenInGarage = true
 		TriggerServerEvent("fx_customs:SetVehicle", veh_data )	 
 		SetEntityCoordsNoOffset(veh,pos.x,pos.y,pos.z)
 		SetEntityHeading(veh,pos.heading)
@@ -127,8 +132,8 @@ function SetVehicleOutsideGarage()
 	local veh = GetVehiclePedIsUsing(ped)
 	vehicleInGarage = false
 	
-	SetEntityCoordsNoOffset(veh,pos.x,pos.y,pos.z)
-	SetEntityHeading(veh,pos.heading)
+	--SetEntityCoordsNoOffset(veh,pos.x,pos.y,pos.z)
+	--SetEntityHeading(veh,pos.heading)
 	SetVehicleOnGroundProperly(veh)
 	SetVehicleHasBeenOwnedByPlayer(veh,true)
 	local id = NetworkGetNetworkIdFromEntity(veh)
@@ -139,13 +144,10 @@ function SetVehicleOutsideGarage()
 	SetEntityCollision(veh,true,true)
 	FreezeEntityPosition(veh, false)
 	SetVehicleDoorsLocked(veh,0)
-	SetEntityHeading(veh,oldrot)
+	--SetEntityHeading(veh,oldrot)
 	TriggerServerEvent('fx_customs:LockGarage',false, currentGarage)	
 	currentGarage = nil
 	oldrot = nil
-    SetTimeout(5000, function()
-        hasJustBeenInGarage = false -- wait 5 seconds and unlock the garage for the new guy
-    end)
 end
 
 
