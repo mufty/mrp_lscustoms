@@ -1,5 +1,6 @@
-useES = true
+MRP_SERVER = nil
 
+TriggerEvent('mrp:getSharedObject', function(obj) MRP_SERVER = obj end)
 
 local tbl = {
 	[1] = {locked = false, player = -1},
@@ -63,57 +64,43 @@ local modPrices = {
 	["Wheel Types"] = 0,
 }
 
+RegisterServerEvent('fx_customs:LockGarage')
+AddEventHandler('fx_customs:LockGarage', function(b,garage,player)
+	tbl[tonumber(garage)].locked = b
+	tbl[tonumber(garage)].player = player
+	TriggerClientEvent('LockGarage',-1,tbl)
+end)
 
-
-Citizen.CreateThread(function()
-	RegisterServerEvent('fx_customs:LockGarage')
-	AddEventHandler('fx_customs:LockGarage', function(b,garage,player)
-		tbl[tonumber(garage)].locked = b
-		tbl[tonumber(garage)].player = player
-		TriggerClientEvent('LockGarage',-1,tbl)
-	end)
-	
-	function openGarage()
-		for theId,theValues in pairs(tbl) do
-			if tbl[theId].locked == true and tbl[theId].player ~= -1 and not GetPlayerName(tbl[theId].player) then
-				local pl = GetPlayerName(tbl[theId].player)
-				tbl[theId].locked = false
-				TriggerClientEvent('LockGarage',-1,tbl)
-				Citizen.Trace("garage closed but player not found, opening..")
-			end
+function openGarage()
+	for theId,theValues in pairs(tbl) do
+		if tbl[theId].locked == true and tbl[theId].player ~= -1 and not GetPlayerName(tbl[theId].player) then
+			local pl = GetPlayerName(tbl[theId].player)
+			tbl[theId].locked = false
+			TriggerClientEvent('LockGarage',-1,tbl)
+			Citizen.Trace("garage closed but player not found, opening..")
 		end
-		SetTimeout(20000, openGarage)
 	end
 	SetTimeout(20000, openGarage)
+end
+SetTimeout(20000, openGarage)
+
+RegisterServerEvent("fx_customs:RequestPriceList")
+AddEventHandler("fx_customs:RequestPriceList", function()
+	TriggerClientEvent("fx_customs:RequestPriceList",source,modPrices)
+end)
+
+RegisterServerEvent("fx_customs:payPart")
+AddEventHandler('fx_customs:payPart', function(price)
+	sorse = source
+	couldafford = false 
+    local char = MRP_SERVER.getSpawnedCharacter(source)
+    
+    if char and char.stats.cash >= price then
+        TriggerEvent('mrp:bankin:server:pay:cash', sorse, price)
+        couldafford = true
+    else
+        couldafford = false 
+    end
 	
-	RegisterServerEvent("fx_customs:RequestPriceList")
-	AddEventHandler("fx_customs:RequestPriceList", function()
-		TriggerClientEvent("fx_customs:RequestPriceList",source,modPrices)
-	end)
-	
-	if useES == false then
-		for theRow,theKey in pairs(modPrices) do 
-			modPrices[theRow] = 0
-		end
-	end
-	
-	RegisterServerEvent("fx_customs:payPart")
-	AddEventHandler('fx_customs:payPart', function(price)
-		sorse = source
-		if useES then
-			couldafford = false 
-			TriggerEvent('es:getPlayerFromId', sorse, function(ourUser) 
-				if ourUser and ourUser.getMoney() >= price then
-					ourUser.removeMoney(price)
-					couldafford = true
-				else
-					couldafford = false 
-				end
-			end)
-		else 
-			couldafford = true
-		end
-		
-		TriggerClientEvent("lscustoms:payedForPart", sorse, couldafford)
-	end)	
+	TriggerClientEvent("lscustoms:payedForPart", sorse, couldafford)
 end)
