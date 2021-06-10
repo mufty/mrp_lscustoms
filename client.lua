@@ -2,10 +2,6 @@ MRP_CLIENT = nil
 
 TriggerEvent('mrp:vehicle:getSharedObject', function(obj) MRP_CLIENT = obj end)
 
-while (MRP_CLIENT == null) {
-    print('Waiting for shared object....');
-}
-
 local vehicleInGarage = false
 local FirstJoinProper = false
 local closed = false
