@@ -428,6 +428,7 @@ Citizen.CreateThread(function()
 			WarMenu.CreateSubMenu("metallic2", "secondary", "Metallic Paint")
 			WarMenu.CreateSubMenu("matte2", "secondary","Matte Paint")
 			WarMenu.CreateSubMenu("metal2", "secondary","Metal Paint")
+            WarMenu.CreateSubMenu("pearlescent2", "secondary","Pearlescent paint")
 			
 			WarMenu.CreateSubMenu("classic3", "rimpaint", "Classic Paint")
 			WarMenu.CreateSubMenu("metallic3", "rimpaint", "Metallic Paint")
@@ -539,6 +540,7 @@ Citizen.CreateThread(function()
 			WarMenu.MenuButton("Metallic", "metallic2")
 			WarMenu.MenuButton("Matte", "matte2")
 			WarMenu.MenuButton("Metal", "metal2")
+            WarMenu.MenuButton("Pearlescent", "pearlescent2")
 			WarMenu.Display()
 		elseif WarMenu.IsMenuOpened("rimpaint") then
 			WarMenu.MenuButton("Classic", "classic3")
@@ -781,6 +783,42 @@ Citizen.CreateThread(function()
 						end
 					elseif isPreviewing and cursec ~= thePaint.id then
 						SetVehicleColours(veh,oldprim,thePaint.id)
+						isPreviewing = true
+					end
+				end
+			end
+			WarMenu.Display()
+        elseif WarMenu.IsMenuOpened("pearlescent2") then 
+			for theName,thePaint in pairs(paintsClassic) do
+                tp,ts = GetVehicleExtraColours(veh)
+				if tp == thePaint.id and not isPreviewing then
+					pricetext = "Installed"
+				else
+					if isPreviewing and tp == thePaint.id then
+						pricetext = "Previewing"
+					else
+						pricetext = modPrices.paint.."$"
+					end
+				end
+				curprim,cursec = GetVehicleExtraColours(veh)
+				if WarMenu.Button(thePaint.name, pricetext) then
+					if not isPreviewing then
+						oldmodtype = "paint"
+						oldmodaction = false
+						oldprim,oldsec = GetVehicleExtraColours(veh)
+						oldmod = table.pack(oldprim,oldsec)
+						SetVehicleExtraColours(veh,thePaint.id,oldsec)
+						isPreviewing = true
+					elseif isPreviewing and curprim == thePaint.id then
+						payed = payPart(modPrices.paint)
+						if payed then
+							SetVehicleExtraColours(veh,thePaint.id,oldsec)
+							isPreviewing = false
+							oldmodtype = -1
+							oldmod = -1
+						end
+					elseif isPreviewing and curprim ~= thePaint.id then
+						SetVehicleExtraColours(veh,thePaint.id, oldsec)
 						isPreviewing = true
 					end
 				end
