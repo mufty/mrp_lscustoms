@@ -59,6 +59,7 @@ function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
 	DrawText(x , y)
 end
 
+local inGarage = false
 
 Citizen.CreateThread(function()
 	TriggerServerEvent("fx_customs:RequestPriceList") -- request price list
@@ -71,10 +72,11 @@ Citizen.CreateThread(function()
 				local veh = GetVehiclePedIsUsing(player)
 				local distance = GetDistanceBetweenCoords(pos.inside.x, pos.inside.y, pos.inside.z, playerLoc)
 				
-                if distance < pos.range then
-                    displayHelpText("Press ~INPUT_PICKUP~ to use enter shop ~b~")
+                if distance < pos.range and not inGarage then
+                    displayHelpText("Press ~INPUT_PICKUP~ to enter shop ~b~")
                     if IsControlJustPressed(1, 38) then
                         if DoesEntityExist(veh) then
+                            inGarage = true
                             if not pos.locked then
                                 TriggerServerEvent("fx_customs:RequestPriceList")
                                 currentGarage = i
@@ -168,6 +170,7 @@ local vehicleMods = {
 	{name = "Fender", id = 8},
 	{name = "Right Fender", id = 9},
 	{name = "Roof", id = 10},
+    {name = "Xenon Lights", id = 22},
 	{name = "Vanity Plates", id = 25},
 	{name = "Trim", id = 27},
 	{name = "Ornaments", id = 28},
@@ -260,6 +263,23 @@ local neonColors = {
 	["Pony Pink"] ={255,102,255},
 	["Hot Pink"] ={255,0,255},
 	["Purple"] ={153,0,153},
+}
+
+local xenonColors = {
+	["Default"] = -1,
+	["White"] = 0,
+	["Blue"] = 1,
+	["Electric Blue"] = 2,
+	["Mint Green"] = 3,
+	["Lime Green"] = 4,
+	["Yellow"] = 5,
+	["Golden Shower"] = 6,
+	["Orange"] = 7,
+	["Red"] = 8,
+	["Pony Pink"] = 9,
+	["Hot Pink"] = 10,
+    ["Purple"] = 11,
+    ["Blacklight"] = 12,
 }
 
 local paintsClassic = { -- kill me pls 
@@ -410,7 +430,7 @@ Citizen.CreateThread(function()
 	WarMenu.SetMenuBackgroundColor('tunings', 0,0,0,220)
 	WarMenu.SetMenuBackgroundColor('performance', 0,0,0,220)
 	WarMenu.SetMenuBackgroundColor('closeMenu', 0,0,0,220)
-	
+    
 	for i,theItem in pairs(vehicleMods) do
 		WarMenu.CreateSubMenu(theItem.id, 'tunings', theItem.name)
 		
@@ -471,7 +491,8 @@ Citizen.CreateThread(function()
 			WarMenu.Display()
 		elseif WarMenu.IsMenuOpened('closeMenu') then
 			if WarMenu.Button('Yes') then
-				WarMenu.CloseMenu()
+                inGarage = false
+                WarMenu.CloseMenu()
 				SetVehicleOutsideGarage()
 			elseif WarMenu.MenuButton('No', 'LSC') then
 			end
@@ -488,6 +509,9 @@ Citizen.CreateThread(function()
 					if WarMenu.MenuButton(theItem.name, theItem.id) then
 					end
 				elseif theItem.id == "wheeltypes" then
+					if WarMenu.MenuButton(theItem.name, theItem.id) then
+					end
+                elseif theItem.id == 22 then --xenon lights
 					if WarMenu.MenuButton(theItem.name, theItem.id) then
 					end
 				else
@@ -1080,7 +1104,13 @@ Citizen.CreateThread(function()
 						SetVehicleExtraColours(veh,pc,pd)
 						isPreviewing = false
 						oldmodtype = -1
-						oldmod = -1						
+						oldmod = -1
+                    elseif oldmodtype == "xenon" then
+                        ToggleVehicleMod(veh, 22, oldmodaction)
+                        SetVehicleXenonLightsColor(veh, oldmod)
+                        isPreviewing = false
+                        oldmodtype = -1
+                        oldmod = -1
 					else
 						if oldmodaction == "rm" then
 							RemoveVehicleMod(veh, oldmodtype)
@@ -1187,6 +1217,51 @@ Citizen.CreateThread(function()
 								SetVehicleNeonLightEnabled(veh,1,true)
 								SetVehicleNeonLightEnabled(veh,2,true)
 								SetVehicleNeonLightEnabled(veh,3,true)
+								isPreviewing = true
+							end
+						end
+					end
+					WarMenu.Display()
+                elseif theItem.id == 22 then --xenon					
+					if WarMenu.Button("None", "0$") then
+						ToggleVehicleMod(veh, 22, false)
+                        isPreviewing = false
+					end
+					
+					for i,theItem in pairs(xenonColors) do
+                        currentColor = GetVehicleXenonLightsColor(veh)
+                        isXenonEnabled = IsToggleModOn(veh, 22)
+                        
+						if currentColor == theItem and not isPreviewing then
+							pricestring = "Installed"
+						else
+							if isPreviewing and currentColor == theItem then
+								pricestring = "Previewing"
+							else
+								pricestring = modPrices.Xenon.."$"
+							end
+						end
+						
+						if WarMenu.Button(i, pricestring) then
+							if not isPreviewing then
+                                ToggleVehicleMod(veh, 22, true)
+								oldmodtype = "xenon"
+								oldmodaction = isXenonEnabled
+								oldmod = currentColor
+								SetVehicleXenonLightsColor(veh,theItem)
+								isPreviewing = true
+							elseif isPreviewing and currentColor == theItem then
+								payed = payPart(modPrices.Xenon)
+								if payed then
+                                    ToggleVehicleMod(veh, 22, true)
+									SetVehicleXenonLightsColor(veh,theItem)
+									isPreviewing = false
+									oldmodtype = -1
+									oldmod = -1
+								end
+							elseif isPreviewing and currentColor ~= theItem then
+                                ToggleVehicleMod(veh, 22, true)
+                                SetVehicleXenonLightsColor(veh,theItem)
 								isPreviewing = true
 							end
 						end
