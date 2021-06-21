@@ -476,7 +476,13 @@ Citizen.CreateThread(function()
 				payed = payPart(modPrices.repair)
 				Citizen.Trace(tostring(payed))
 				if payed then
+                    local fuelLevelBeforeRepair = GetVehicleFuelLevel(veh)
 					SetVehicleFixed(veh)
+                    SetVehicleBodyHealth(veh, 1000.0)
+                    SetVehicleEngineHealth(veh, 1000.0)
+                    SetVehiclePetrolTankHealth(veh, 1000.0)
+                    --set fuel level back to what it was before repair
+                    SetVehicleFuelLevel(veh, fuelLevelBeforeRepair);
 				end
 				
 			elseif GetVehicleDirtLevel(veh) ~= 0.0 and WarMenu.Button('Clean Vehicle', modPrices.clean.."$") then
