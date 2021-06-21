@@ -150,7 +150,8 @@ function SetVehicleOutsideGarage()
 	FreezeEntityPosition(veh, false)
 	SetVehicleDoorsLocked(veh,0)
 	--SetEntityHeading(veh,oldrot)
-	TriggerServerEvent('fx_customs:LockGarage',false, currentGarage)	
+	TriggerServerEvent('fx_customs:LockGarage',false, currentGarage)
+    TriggerEvent('mrp:vehicle:save:owned')
 	currentGarage = nil
 	oldrot = nil
 end
