@@ -15,8 +15,12 @@ local nearDefault = false
 local nearImport = false
 local nearTuner = false
 
-local bennyLocationTuner = vector3(938.37, -970.82, 39.76)
-local bennyLocationImport = vector3(-772.92,-234.92,37.08)
+-- maze bank -76.58 -823.96 284.58      155.90
+-- club house 1007.78 -3158.00 -39.31   272.12
+--local bennyLocationTuner = vector3(938.37, -970.82, 39.76)
+local bennyLocationTuner = vector3(1007.78, -3158.00, -39.31)
+--local bennyLocationImport = vector3(-772.92,-234.92,37.08)
+local bennyLocationImport = vector3(-76.58, -823.96, 284.58)
 local bennyLocation = vector3(-211.55, -1324.55, 30.90)
 local bennyLocationBridge = vector3(727.74, -1088.95, 22.17)
 local billyLocationPaleto = vector3(110.8, 6626.46, 31.89)
@@ -61,29 +65,42 @@ local function isNear(pos1, pos2, distMustBe)
 end
 
 local function addBlips()
-	local blip = AddBlipForCoord(bennyLocationTuner.x,bennyLocationTuner.y,bennyLocationTuner.z)
-	SetBlipSprite(blip, 72)
+	--local blip = AddBlipForCoord(bennyLocationTuner.x,bennyLocationTuner.y,bennyLocationTuner.z)
+    local blip = AddBlipForCoord(-38.47, 6419.88, 31.49)
+    SetBlipSprite(blip, 523)
 	SetBlipScale(blip, 0.9)
+    SetBlipColour(blip, 43)
 	SetBlipAsShortRange(blip,true)
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString("Tuna Shop")
+    EndTextCommandSetBlipName(blip)
     
-    blip = AddBlipForCoord(bennyLocationImport.x,bennyLocationImport.y,bennyLocationImport.z)
-	SetBlipSprite(blip, 72)
+    --blip = AddBlipForCoord(bennyLocationImport.x,bennyLocationImport.y,bennyLocationImport.z)
+    blip = AddBlipForCoord(-82.628, -772.219, 39.591)
+	SetBlipSprite(blip, 523)
 	SetBlipScale(blip, 0.9)
+    SetBlipColour(blip, 43)
 	SetBlipAsShortRange(blip,true)
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString("Import Garage")
+    EndTextCommandSetBlipName(blip)
     
     blip = AddBlipForCoord(bennyLocation.x,bennyLocation.y,bennyLocation.z)
 	SetBlipSprite(blip, 72)
 	SetBlipScale(blip, 0.9)
+    SetBlipColour(blip, 43)
 	SetBlipAsShortRange(blip,true)
     
     blip = AddBlipForCoord(bennyLocationBridge.x,bennyLocationBridge.y,bennyLocationBridge.z)
 	SetBlipSprite(blip, 72)
 	SetBlipScale(blip, 0.9)
+    SetBlipColour(blip, 43)
 	SetBlipAsShortRange(blip,true)
     
     blip = AddBlipForCoord(billyLocationPaleto.x,billyLocationPaleto.y,billyLocationPaleto.z)
 	SetBlipSprite(blip, 72)
 	SetBlipScale(blip, 0.9)
+    SetBlipColour(blip, 43)
 	SetBlipAsShortRange(blip,true)
 end
 
@@ -129,7 +146,7 @@ function RepairVehicle()
     TriggerEvent('veh.randomDegredation',10,plyVeh,3)
     
     --set fuel level back to what it was before repair
-    SetVehicleFuelLevel(veh, fuelLevelBeforeRepair);
+    SetVehicleFuelLevel(plyVeh, fuelLevelBeforeRepair);
 end
 
 function GetCurrentMod(id)
@@ -748,10 +765,11 @@ AddEventHandler('event:control:bennys', function(useID)
         elseif useID == 5 and not isPlyInBennys then -- Bennys
             bennyHeading = 44.22135375977
             enterLocation(billyLocationPaleto)
-        elseif useID == 2 and not isPlyInBennys and exports["isPed"]:GroupRank("illegal_carshop") > 2 then
-            bennyHeading = 203.73135375977
+        elseif useID == 2 and not isPlyInBennys then --and exports["isPed"]:GroupRank("illegal_carshop") > 2 then
+            bennyHeading = 155.90
             enterLocation(bennyLocationImport)
-        elseif useID == 3 and not isPlyInBennys and exports["isPed"]:GroupRank("tuner_carshop") > 2 then
+        elseif useID == 3 and not isPlyInBennys then --and exports["isPed"]:GroupRank("tuner_carshop") > 2 then
+            bennyHeading = 272.12
             enterLocation(bennyLocationTuner)
         end
     end
