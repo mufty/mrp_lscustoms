@@ -1,4 +1,4 @@
-repairCostMRP_SERVER = nil
+MRP_SERVER = nil
 
 TriggerEvent('mrp:getSharedObject', function(obj) MRP_SERVER = obj end)
 
