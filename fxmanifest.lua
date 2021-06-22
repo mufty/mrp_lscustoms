@@ -3,17 +3,30 @@ game 'gta5'
 
 author 'mufty'
 description 'MRP LSCustoms'
-version '0.0.1'
+version '2.0.0'
 
 dependencies {
     "mrp_vehicle"
 }
 
+ui_page "core/client/ui/html/index.html"
+
+files {
+    "core/client/ui/html/index.html",
+    "core/client/ui/html/css/menu.css",
+    "core/client/ui/html/js/ui.js",
+    "core/client/ui/html/imgs/logo.png",
+    "core/client/ui/html/sounds/wrench.ogg",
+    "core/client/ui/html/sounds/respray.ogg"
+}
+
 client_scripts {
-    'warmenu.lua',
-	'client.lua'
+    "core/_config/cfg_vehicleCustomisation.lua",
+    "core/client/ui/cl_ui.lua",
+    "core/client/cl_bennys.lua"
 }
 
 server_scripts {
-    'server.lua',
+    "core/_config/cfg_vehicleCustomisation.lua",
+    "core/server/sv_bennys.lua"
 }
