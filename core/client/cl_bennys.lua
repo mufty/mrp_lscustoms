@@ -121,10 +121,15 @@ function RepairVehicle()
     local plyPed = PlayerPedId()
     local plyVeh = GetVehiclePedIsIn(plyPed, false)
 
+    local fuelLevelBeforeRepair = GetVehicleFuelLevel(plyVeh)
+    
     SetVehicleFixed(plyVeh)
     SetVehicleDirtLevel(plyVeh, 0.0)
     SetVehiclePetrolTankHealth(plyVeh, 4000.0)
     TriggerEvent('veh.randomDegredation',10,plyVeh,3)
+    
+    --set fuel level back to what it was before repair
+    SetVehicleFuelLevel(veh, fuelLevelBeforeRepair);
 end
 
 function GetCurrentMod(id)

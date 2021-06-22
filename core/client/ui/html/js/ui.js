@@ -1,24 +1,17 @@
-window.onload = function(e)
-{
+window.onload = function(e) {
     let menuStructure = {};
     let maxMenuItems = 10;
 
-    function toggleMenuContainer(state)
-    {
-        if(state)
-        {
+    function toggleMenuContainer(state) {
+        if (state) {
             $("#menu_container").fadeIn("fast", "swing");
-        }
-        else
-        {
+        } else {
             $("#menu_container").fadeOut("fast", "swing");
         }
     }
 
-    function createMenu(menu, heading, subheading)
-    {
-        menuStructure[menu] = 
-        {
+    function createMenu(menu, heading, subheading) {
+        menuStructure[menu] = {
             menu: menu,
             heading: heading,
             subheading: subheading,
@@ -32,67 +25,51 @@ window.onload = function(e)
         $("#menu_container").append(menuStructure[menu].container);
     }
 
-    function destroyMenus()
-    {
-        for(var k in menuStructure)
-        {
+    function destroyMenus() {
+        for (var k in menuStructure) {
             $("." + menuStructure[k].menu).remove();
         }
-        
+
         menuStructure = {}
     }
 
-    function populateMenu(menu, id, item, item2)
-    {
-        menuStructure[menu].items[id] = 
-        {
+    function populateMenu(menu, id, item, item2) {
+        menuStructure[menu].items[id] = {
             id: id,
             item: item,
             item2: item2
         }
 
-        if(item2 == "none")
-        {
+        if (item2 == "none") {
             $("." + menu).append("<li class = '" + id + "'><span class = 'item1'>" + item + "</span></li>");
-        }
-        else
-        {
+        } else {
             $("." + menu).append("<li class = '" + id + "'><span class = 'item1'>" + item + "</span> <span class = 'item2' style = 'float: right;'>" + item2 + "</span></li>");
         }
     }
 
-    function finishPopulatingMenu(menu)
-    {
+    function finishPopulatingMenu(menu) {
         menuStructure[menu].itemsArray = $("." + menu + " li").toArray();
     }
 
-    function updateMenuHeading(menu)
-    {
+    function updateMenuHeading(menu) {
         $("#menu_heading span").text(menuStructure[menu].heading);
     }
 
-    function updateMenuSubheading(menu)
-    {
+    function updateMenuSubheading(menu) {
         $("#menu_subheading span").text(menuStructure[menu].subheading);
     }
 
-    function updateMenuStatus(text)
-    {
+    function updateMenuStatus(text) {
         $("#menu_status span").text(text);
     }
 
-    function toggleMenu(state, menu)
-    {
-        if(state)
-        {
-            if(menuStructure[menu].selectedItem < maxMenuItems)
-            {
+    function toggleMenu(state, menu) {
+        if (state) {
+            if (menuStructure[menu].selectedItem < maxMenuItems) {
                 $("." + menu).empty();
 
-                for(var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++)
-                {
-                    if(i < maxMenuItems)
-                    {
+                for (var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++) {
+                    if (i < maxMenuItems) {
                         $("." + menu).append(menuStructure[menu].itemsArray[i]);
                     }
                 }
@@ -105,20 +82,16 @@ window.onload = function(e)
                 var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                 var val2 = $("." + menu + " .item_selected .item1").text();
                 var val3 = $("." + menu + " .item_selected .item2").text();
-                $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                     id: val1,
                     item: val2,
                     item2: val3
                 }));
-            }
-            else
-            {
+            } else {
                 $("." + menu).empty();
 
-                for(var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++)
-                {
-                    if(i > (menuStructure[menu].selectedItem - maxMenuItems) && i <= (maxMenuItems + (menuStructure[menu].selectedItem - maxMenuItems)))
-                    {
+                for (var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++) {
+                    if (i > (menuStructure[menu].selectedItem - maxMenuItems) && i <= (maxMenuItems + (menuStructure[menu].selectedItem - maxMenuItems))) {
                         $("." + menu).append(menuStructure[menu].itemsArray[i]);
                     }
                 }
@@ -131,7 +104,7 @@ window.onload = function(e)
                 var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                 var val2 = $("." + menu + " .item_selected .item1").text();
                 var val3 = $("." + menu + " .item_selected .item2").text();
-                $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                     id: val1,
                     item: val2,
                     item2: val3
@@ -139,31 +112,24 @@ window.onload = function(e)
             }
 
             $("." + menu).show();
-        }
-        else
-        {
+        } else {
             $("." + menu).hide();
         }
     }
 
-    function updateItem2TextOnly(menu, id, text)
-    {
+    function updateItem2TextOnly(menu, id, text) {
         $("." + menu + " ." + id + " .item2").text(text);
-        $.post("http://mrp_lscustoms/updateItem2", JSON.stringify({
+        $.post("https://mrp_lscustoms/updateItem2", JSON.stringify({
             item: text
         }));
     }
 
-    function updateItem2Text(menu, id, text)
-    {
-        if(menuStructure[menu].previousSelectedItemID == null)
-        {
+    function updateItem2Text(menu, id, text) {
+        if (menuStructure[menu].previousSelectedItemID == null) {
             $("." + menu + " ." + id + " .item2").text(text);
 
             menuStructure[menu].previousSelectedItemID = id
-        }
-        else if(id != menuStructure[menu].previousSelectedItemID)
-        {
+        } else if (id != menuStructure[menu].previousSelectedItemID) {
             var prevID = menuStructure[menu].previousSelectedItemID
 
             $("." + menu + " ." + prevID + " .item2").text(menuStructure[menu].items[prevID].item2);
@@ -171,31 +137,25 @@ window.onload = function(e)
             menuStructure[menu].previousSelectedItemID = id;
 
             $("." + menu + " .item_selected .item2").text(text);
-        }
-        else
-        {
+        } else {
             $("." + menu + " ." + id + " .item2").text(text);
 
             menuStructure[menu].previousSelectedItemID = null
         }
 
-        $.post("http://mrp_lscustoms/updateItem2", JSON.stringify({
+        $.post("https://mrp_lscustoms/updateItem2", JSON.stringify({
             item: text
         }));
     }
 
-    function updateItem2ID(menu, id, text)
-    {
+    function updateItem2ID(menu, id, text) {
         menuStructure[menu].previousSelectedItemID = id
     }
 
-    function scrollMenuFunctionality(direction, menu)
-    {
-        switch(direction)
-        {
+    function scrollMenuFunctionality(direction, menu) {
+        switch (direction) {
             case "down":
-                if(menuStructure[menu].selectedItem < (maxMenuItems - 1) && menuStructure[menu].selectedItem < (Object.keys(menuStructure[menu].itemsArray).length - 1))
-                {
+                if (menuStructure[menu].selectedItem < (maxMenuItems - 1) && menuStructure[menu].selectedItem < (Object.keys(menuStructure[menu].itemsArray).length - 1)) {
                     menuStructure[menu].selectedItem++;
 
                     menuStructure[menu].itemsArray[menuStructure[menu].selectedItem].classList.add("item_selected");
@@ -208,14 +168,12 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                    $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
                     }));
-                }
-                else if(menuStructure[menu].selectedItem < (Object.keys(menuStructure[menu].itemsArray).length - 1))
-                {
+                } else if (menuStructure[menu].selectedItem < (Object.keys(menuStructure[menu].itemsArray).length - 1)) {
                     menuStructure[menu].selectedItem++;
 
                     $("." + menu).append(menuStructure[menu].itemsArray[menuStructure[menu].selectedItem]);
@@ -231,23 +189,19 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                    $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
                     }));
-                }
-                else if(menuStructure[menu].selectedItem == (Object.keys(menuStructure[menu].itemsArray).length - 1))
-                {
+                } else if (menuStructure[menu].selectedItem == (Object.keys(menuStructure[menu].itemsArray).length - 1)) {
                     menuStructure[menu].selectedItem = 0;
 
                     $("." + menu + " .item_selected").find("i").remove();
                     $("." + menu).empty();
 
-                    for(var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++)
-                    {
-                        if(i < maxMenuItems)
-                        {
+                    for (var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++) {
+                        if (i < maxMenuItems) {
                             $("." + menu).append(menuStructure[menu].itemsArray[i]);
                         }
                     }
@@ -260,26 +214,23 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                    $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
                     }));
                 }
-            break;
+                break;
 
             case "up":
-                if(menuStructure[menu].selectedItem == 0)
-                {
+                if (menuStructure[menu].selectedItem == 0) {
                     menuStructure[menu].selectedItem = Object.keys(menuStructure[menu].itemsArray).length - 1;
 
                     $("." + menu + " .item_selected").find("i").remove();
                     $("." + menu).empty();
 
-                    for(var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++)
-                    {
-                        if(i > (menuStructure[menu].selectedItem - maxMenuItems) && i <= (maxMenuItems + (menuStructure[menu].selectedItem - maxMenuItems)))
-                        {
+                    for (var i = 0; i < Object.keys(menuStructure[menu].itemsArray).length; i++) {
+                        if (i > (menuStructure[menu].selectedItem - maxMenuItems) && i <= (maxMenuItems + (menuStructure[menu].selectedItem - maxMenuItems))) {
                             $("." + menu).append(menuStructure[menu].itemsArray[i]);
                         }
                     }
@@ -292,14 +243,12 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                    $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
                     }));
-                }
-                else if(menuStructure[menu].selectedItem < (maxMenuItems) && menuStructure[menu].selectedItem > 0)
-                {
+                } else if (menuStructure[menu].selectedItem < (maxMenuItems) && menuStructure[menu].selectedItem > 0) {
                     menuStructure[menu].selectedItem--;
 
                     menuStructure[menu].itemsArray[menuStructure[menu].selectedItem].classList.add("item_selected");
@@ -312,14 +261,12 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                    $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
                     }));
-                }
-                else if(menuStructure[menu].selectedItem > (maxMenuItems - 1))
-                {
+                } else if (menuStructure[menu].selectedItem > (maxMenuItems - 1)) {
                     menuStructure[menu].selectedItem--;
 
                     menuStructure[menu].itemsArray[menuStructure[menu].selectedItem].classList.add("item_selected");
@@ -336,96 +283,82 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("http://mrp_lscustoms/selectedItem", JSON.stringify({
+                    $.post("https://mrp_lscustoms/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
                     }));
                 }
-            break;
+                break;
         }
     }
 
-    function playSoundEffect(soundEffect, volume)
-    {
+    function playSoundEffect(soundEffect, volume) {
         var audioPlayer = null;
 
-        if(audioPlayer != null)
-        {
+        if (audioPlayer != null) {
             audioPlayer.pause();
         }
 
-        audioPlayer = new Howl({src: ["./sounds/" + soundEffect + ".ogg"]});
+        audioPlayer = new Howl({
+            src: ["./sounds/" + soundEffect + ".ogg"]
+        });
         audioPlayer.volume(volume);
         audioPlayer.play();
     }
 
-    window.addEventListener("message", function(event)
-    {
+    window.addEventListener("message", function(event) {
         var eventData = event.data;
 
-        if(eventData.toggleMenuContainer)
-        {
+        if (eventData.toggleMenuContainer) {
             toggleMenuContainer(eventData.state);
         }
 
-        if(eventData.createMenu)
-        {
+        if (eventData.createMenu) {
             createMenu(eventData.menu, eventData.heading, eventData.subheading);
         }
 
-        if(eventData.destroyMenus)
-        {
+        if (eventData.destroyMenus) {
             destroyMenus();
         }
 
-        if(eventData.populateMenu)
-        {
+        if (eventData.populateMenu) {
             populateMenu(eventData.menu, eventData.id, eventData.item, eventData.item2);
         }
 
-        if(eventData.finishPopulatingMenu)
-        {
+        if (eventData.finishPopulatingMenu) {
             finishPopulatingMenu(eventData.menu);
         }
 
-        if(eventData.updateMenuHeading)
-        {
+        if (eventData.updateMenuHeading) {
             updateMenuHeading(eventData.menu);
         }
 
-        if(eventData.updateMenuSubheading)
-        {
+        if (eventData.updateMenuSubheading) {
             updateMenuSubheading(eventData.menu);
         }
 
-        if(eventData.updateMenuStatus)
-        {
+        if (eventData.updateMenuStatus) {
             updateMenuStatus(eventData.statusText)
         }
 
-        if(eventData.toggleMenu)
-        {
+        if (eventData.toggleMenu) {
             toggleMenu(eventData.state, eventData.menu);
         }
 
-        if(eventData.updateItem2Text)
-        {
+        if (eventData.updateItem2Text) {
             updateItem2Text(eventData.menu, eventData.id, eventData.item2)
         }
 
-        if(eventData.updateItem2TextOnly)
-        {
+        if (eventData.updateItem2TextOnly) {
             updateItem2TextOnly(eventData.menu, eventData.id, eventData.item2)
         }
 
-        if(eventData.scrollMenuFunctionality)
-        {
+        if (eventData.scrollMenuFunctionality) {
             scrollMenuFunctionality(eventData.direction, eventData.menu);
         }
 
-        if(eventData.playSoundEffect)
-        {
+        if (eventData.playSoundEffect) {
             playSoundEffect(eventData.soundEffect, eventData.volume);
         }
     });
